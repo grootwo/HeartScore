@@ -10,13 +10,14 @@ import GameKit
 
 class GameCenterManager: NSObject {
     // 게임 센터 계정 인증
-    func authenticateUser() {
+    func authenticateUser() -> Bool {
         GKLocalPlayer.local.authenticateHandler = { vc, error in
             guard error == nil else {
                 print(error?.localizedDescription ?? "")
                 return
             }
         }
+        return true
     }
     
 }
