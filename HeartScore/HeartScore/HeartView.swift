@@ -20,10 +20,11 @@ struct HeartView: View {
             })
             .tint(.red)
             .buttonStyle(.bordered)
-            Spacer()
-            Button(action: {
+            Spacer()            Button(action: {
                 heartCount += 1
-                gameCenterManager.submitPoint(point: 1)
+                Task {
+                    await gameCenterManager.submitPoint(point: 1)
+                }
             }, label: {
                 Image(systemName: "heart.fill")
                     .resizable()

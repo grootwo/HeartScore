@@ -32,12 +32,13 @@ class GameCenterManager: NSObject, GKGameCenterControllerDelegate, ObservableObj
     }
     
     // MARK: 순위표 점수 업데이트 하기
-    func submitPoint(point: Int) {
-        let score = GKLeaderboardScore()
-        score.leaderboardID = leaderboardID
-        print("score: \(score.value)")
-        score.value = score.value + Int(point)
-        GKLeaderboard.submitScore(score.value, context: 0, player: GKLocalPlayer.local,
+    func submitPoint(point: Int) async {
+        var formerPoint = await loadFormerPoint()
+        if formerPoint == -1 {
+            print("Error: cannot load former point from leaderboard.")
+            return
+        }
+        GKLeaderboard.submitScore(formerPoint + Int(point), context: 0, player: GKLocalPlayer.local,
                                   leaderboardIDs: [leaderboardID]) { error in
             if error != nil {
                 print("Error: \(error!.localizedDescription).")
@@ -48,6 +49,17 @@ class GameCenterManager: NSObject, GKGameCenterControllerDelegate, ObservableObj
         reportFirstAchievement(achievementID: "firstheart")
         report10Achievement(achievementID: "heart10")
         report30Achievement(achievementID: "heart30")
+    }
+    
+    func loadFormerPoint() async -> Int {
+        let leaderboards = try? await GKLeaderboard.loadLeaderboards(IDs: [leaderboardID])
+        guard let leaderboard = leaderboards?.first else { return -1 }
+        print("lb id: \(leaderboard.baseLeaderboardID)")
+        let entries = try? await leaderboard.loadEntries(for: [GKLocalPlayer.local],
+                                                         timeScope: GKLeaderboard.TimeScope.today)
+        guard let entry = entries?.1.first else { return -1 }
+        print(entry.score)
+        return entry.score
     }
     
     // MARK: 성취 업데이트하기
