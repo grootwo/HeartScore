@@ -23,6 +23,7 @@ struct HeartView: View {
             Spacer()
             Button(action: {
                 heartCount += 1
+                gameCenterManager.submitPoint(point: 1)
             }, label: {
                 Image(systemName: "heart.fill")
                     .resizable()

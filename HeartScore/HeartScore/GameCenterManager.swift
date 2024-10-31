@@ -35,6 +35,7 @@ class GameCenterManager: NSObject, GKGameCenterControllerDelegate, ObservableObj
     func submitPoint(point: Int) {
         let score = GKLeaderboardScore()
         score.leaderboardID = leaderboardID
+        print("score: \(score.value)")
         score.value = score.value + Int(point)
         GKLeaderboard.submitScore(score.value, context: 0, player: GKLocalPlayer.local,
                                   leaderboardIDs: [leaderboardID]) { error in
@@ -44,23 +45,39 @@ class GameCenterManager: NSObject, GKGameCenterControllerDelegate, ObservableObj
         }
         print("game center: updated leaderboard")
         // TODO: 78계단 이외 계단이 생길 때 수정하기
-        reportAchievement(achievementID: "first78staircase")
+        reportFirstAchievement(achievementID: "firstheart")
+        report10Achievement(achievementID: "heart10")
+        report30Achievement(achievementID: "heart30")
     }
     
     // MARK: 성취 업데이트하기
-    func reportAchievement(achievementID: String) {
+    // TODO: 기존 completion을 불러오질 못하는 중~!
+    func reportFirstAchievement(achievementID: String) {
         let achievement = GKAchievement(identifier: achievementID)
         if !achievement.isCompleted {
             achievement.percentComplete = 100.0
             achievement.showsCompletionBanner = true
-        } else {
-            // TODO: 마스터 성취 업데이트할 때 수정하기
-//            GKAchievement.loadAchievements(completionHandler: { (achievements: [GKAchievement]?, error: Error?) in
-//                achievement = achievements?.first(where: { $0.identifier == achievementID})
-//                achievement?.percentComplete += 4.0
-//                print(achievement?.percentComplete)
-//            })
         }
+        reportAchievement(achievement: achievement)
+    }
+    
+    func report10Achievement(achievementID: String) {
+        let achievement = GKAchievement(identifier: achievementID)
+        print("\(achievementID): \(achievement.percentComplete)")
+        achievement.percentComplete = achievement.percentComplete + 10.0
+        achievement.showsCompletionBanner = true
+        reportAchievement(achievement: achievement)
+    }
+    
+    func report30Achievement(achievementID: String) {
+        let achievement = GKAchievement(identifier: achievementID)
+        print("\(achievementID): \(achievement.percentComplete)")
+        achievement.percentComplete = achievement.percentComplete + 3.0
+        achievement.showsCompletionBanner = true
+        reportAchievement(achievement: achievement)
+    }
+    
+    func reportAchievement(achievement: GKAchievement) {
         GKAchievement.report([achievement], withCompletionHandler: {(error: Error?) in
             if error != nil {
                 print("Error: \(String(describing: error))")
