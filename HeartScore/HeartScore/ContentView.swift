@@ -10,8 +10,9 @@ import SwiftUI
 struct ContentView: View {
     let gamecentermanager = GameCenterManager()
     var body: some View {
-        if gamecentermanager.authenticateUser() {
-            HeartView()
+        HeartView()
+        .onAppear {
+            gamecentermanager.authenticateUser()
         }
     }
 }
