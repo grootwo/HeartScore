@@ -36,12 +36,18 @@ class GameCenterManager: NSObject, GKGameCenterControllerDelegate, ObservableObj
         let formerPoint = await loadFormerPoint()
         if formerPoint == -1 {
             print("Error: cannot load former point from leaderboard.")
-            return
-        }
-        GKLeaderboard.submitScore(formerPoint + Int(point), context: 0, player: GKLocalPlayer.local,
-                                  leaderboardIDs: [leaderboardID]) { error in
-            if error != nil {
-                print("Error: \(error!.localizedDescription).")
+            GKLeaderboard.submitScore(Int(point), context: 0, player: GKLocalPlayer.local,
+                                      leaderboardIDs: [leaderboardID]) { error in
+                if error != nil {
+                    print("Error: \(error!.localizedDescription).")
+                }
+            }
+        } else {
+            GKLeaderboard.submitScore(formerPoint + Int(point), context: 0, player: GKLocalPlayer.local,
+                                      leaderboardIDs: [leaderboardID]) { error in
+                if error != nil {
+                    print("Error: \(error!.localizedDescription).")
+                }
             }
         }
         print("game center: updated leaderboard")
@@ -54,11 +60,10 @@ class GameCenterManager: NSObject, GKGameCenterControllerDelegate, ObservableObj
     func loadFormerPoint() async -> Int {
         let leaderboards = try? await GKLeaderboard.loadLeaderboards(IDs: [leaderboardID])
         guard let leaderboard = leaderboards?.first else { return -1 }
-        print("lb id: \(leaderboard.baseLeaderboardID)")
         let entries = try? await leaderboard.loadEntries(for: [GKLocalPlayer.local],
                                                          timeScope: GKLeaderboard.TimeScope.today)
         guard let entry = entries?.1.first else { return -1 }
-        print(entry.score)
+        print("former point: \(entry.score)")
         return entry.score
     }
     
