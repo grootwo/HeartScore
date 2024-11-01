@@ -33,7 +33,7 @@ class GameCenterManager: NSObject, GKGameCenterControllerDelegate, ObservableObj
     
     // MARK: 순위표 점수 업데이트 하기
     func submitPoint(point: Int) async {
-        var formerPoint = await loadFormerPoint()
+        let formerPoint = await loadFormerPoint()
         if formerPoint == -1 {
             print("Error: cannot load former point from leaderboard.")
             return
