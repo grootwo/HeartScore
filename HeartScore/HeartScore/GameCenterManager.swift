@@ -32,19 +32,20 @@ class GameCenterManager: NSObject, GKGameCenterControllerDelegate, ObservableObj
     }
     
     // MARK: 순위표 점수 업데이트 하기
+    // - TODO: 리더보드 양쪽 사용하기
     func submitPoint(point: Int) async {
         let formerPoint = await loadFormerPoint()
         if formerPoint == -1 {
             print("Error: cannot load former point from leaderboard.")
             GKLeaderboard.submitScore(Int(point), context: 0, player: GKLocalPlayer.local,
-                                      leaderboardIDs: [leaderboardID]) { error in
+                                      leaderboardIDs: [leaderboardID, "leaderboard2"]) { error in
                 if error != nil {
                     print("Error: \(error!.localizedDescription).")
                 }
             }
         } else {
             GKLeaderboard.submitScore(formerPoint + Int(point), context: 0, player: GKLocalPlayer.local,
-                                      leaderboardIDs: [leaderboardID]) { error in
+                                      leaderboardIDs: [leaderboardID, "leaderboard2"]) { error in
                 if error != nil {
                     print("Error: \(error!.localizedDescription).")
                 }
