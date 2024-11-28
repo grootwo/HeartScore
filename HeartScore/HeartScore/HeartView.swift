@@ -12,6 +12,9 @@ struct HeartView: View {
     let gameCenterManager = GameCenterManager()
     var body: some View {
         VStack(spacing: 30) {
+            Button("reset") {
+                gameCenterManager.resetAchievements()
+            }
             Button(action: {
                 gameCenterManager.showAchievements()
             }, label: {

@@ -104,6 +104,17 @@ class GameCenterManager: NSObject, GKGameCenterControllerDelegate, ObservableObj
         print("game center: updated achievement")
     }
     
+    // MARK: 성취 리셋하기
+    func resetAchievements() {
+        GKAchievement.resetAchievements(completionHandler: {(error: Error?) in
+            guard error == nil else {
+                print("Error: \(String(describing: error))")
+                return
+            }
+            print("game center: reset achievements.")
+        })
+    }
+    
     // MARK: 순위표 보기
     func showLeaderboard() {
         let viewController = GKGameCenterViewController(leaderboardID: leaderboardID, playerScope: .friendsOnly, timeScope: .allTime)
