@@ -9,11 +9,22 @@ import SwiftUI
 
 struct HeartView: View {
     @State private var heartCount: Int = 0
+    @AppStorage("isTrue") var isTrue: Bool = false {
+        didSet {
+            print("didSet isTrue: \(isTrue)")
+            if isTrue {
+                gameCenterManager.reportFirstAchievement(achievementID: "heart30")
+            }
+        }
+    }
     let gameCenterManager = GameCenterManager()
     var body: some View {
         VStack(spacing: 30) {
-            Button("reset") {
+            Button("Reset") {
                 gameCenterManager.resetAchievements()
+            }
+            Button("didSet") {
+                isTrue.toggle()
             }
             Button(action: {
                 gameCenterManager.showAchievements()
